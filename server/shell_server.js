@@ -76,9 +76,14 @@ let MeteorShell = {
   createShellClient() {
     let shellClientFile = Assets.getText('server/shell_client.js');
     shellClientFile = `process.env.METEOR_SHELL_DIR = '${this.shellDir}';\n\n` + shellClientFile;
-    shellClientFile = Package.ecmascript.ECMAScript.compileForShell(shellClientFile);
+    shellClientFile = this.transpile(shellClientFile);
 
     fs.writeFileSync(this.shellClientPath(), shellClientFile);
+  },
+
+  transpile(code) {
+    process.env.BABEL_CACHE_DIR = process.env.BABEL_CACHE_DIR || process.cwd();
+    return Package.ecmascript.ECMAScript.compileForShell(code);
   },
 
 }.initialize();
