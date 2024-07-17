@@ -8,7 +8,7 @@ let MeteorShell = {
     return this;
   },
 
-  ensureShellServer() {
+  async ensureShellServer() {
     try {
       if (process.env.METEOR_SHELL_DIR) {
         this.shellDir = process.env.METEOR_SHELL_DIR;
@@ -18,7 +18,7 @@ let MeteorShell = {
         this.listen(this.shellDir);
       }
 
-      this.createShellClient();
+      await this.createShellClient();
     }
     catch(e) {
       console.error('qualia:prod-shell - Failed to start Meteor shell.', e.stack || e);
@@ -73,8 +73,8 @@ let MeteorShell = {
     );
   },
 
-  createShellClient() {
-    let shellClientFile = Assets.getText('server/shell_client.js');
+  async createShellClient() {
+    let shellClientFile = await Assets.getTextAsync('server/shell_client.js');
     shellClientFile = `process.env.METEOR_SHELL_DIR = '${this.shellDir}';\n\n` + shellClientFile;
     shellClientFile = this.transpile(shellClientFile);
 
@@ -83,7 +83,7 @@ let MeteorShell = {
 
   transpile(code) {
     process.env.BABEL_CACHE_DIR = process.env.BABEL_CACHE_DIR || process.cwd();
-    return Package.ecmascript.ECMAScript.compileForShell(code);
+    return Babel.compileForShell(code);
   },
 
 }.initialize();

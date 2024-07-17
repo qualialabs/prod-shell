@@ -11,6 +11,7 @@ Package.onUse(function(api) {
 
   api.use([
     'ecmascript',
+    'babel-compiler@7.11.0',
     'shell-server@0.2.1',
   ], 'server');
 
